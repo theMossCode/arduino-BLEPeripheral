@@ -34,16 +34,11 @@
   #define BLE_DEFAULT_REQ   6
   #define BLE_DEFAULT_RDY   7
   #define BLE_DEFAULT_RST   4
-#elif defined(BLEND)
-  #define BLE_DEFAULT_REQ   9
-  #define BLE_DEFAULT_RDY   8
-  #define BLE_DEFAULT_RST   4
 #else
   #define BLE_DEFAULT_REQ   10
   #define BLE_DEFAULT_RDY   2
   #define BLE_DEFAULT_RST   9
 #endif
-
 
 enum BLEPeripheralEvent {
   BLEConnected = 0,
@@ -54,7 +49,6 @@ enum BLEPeripheralEvent {
 
 typedef void (*BLEPeripheralEventHandler)(BLECentral& central);
 
-
 class BLEPeripheral : public BLEDeviceEventListener,
                         public BLECharacteristicValueChangeListener,
                         public BLERemoteCharacteristicValueChangeListener
@@ -64,7 +58,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     virtual ~BLEPeripheral();
 
     void begin();
-    void poll();
+    void poll(uint32_t* evtBuf = NULL, uint16_t* evtLen = NULL);
     void end();
 
     void setAdvertisedServiceUuid(const char* advertisedServiceUuid);
@@ -83,6 +77,9 @@ class BLEPeripheral : public BLEDeviceEventListener,
 
     void setDeviceName(const char* deviceName);
     void setAppearance(unsigned short appearance);
+
+    uint32_t startAdvertising();
+    uint32_t stopAdvertise();
 
     void addAttribute(BLELocalAttribute& attribute);
     void addLocalAttribute(BLELocalAttribute& localAttribute);

@@ -11,6 +11,9 @@
 #include "BLERemoteCharacteristic.h"
 #include "BLERemoteService.h"
 
+
+#include <ble.h>
+
 struct BLEEirData
 {
   unsigned char length;
@@ -65,13 +68,14 @@ class BLEDevice
                 BLERemoteAttribute** /*remoteAttributes*/,
                 unsigned char /*numRemoteAttributes*/) { }
 
-    virtual void poll() { }
+    virtual void poll(uint32_t* evtBuf = NULL, uint16_t* evtLen = NULL) { }
 
     virtual void end() { }
 
     virtual bool setTxPower(int /*txPower*/) { return false; }
 
-    virtual void startAdvertising() { }
+    virtual uint32_t startAdvertising() { }
+    virtual uint32_t stopAdvertise(){ }
     virtual void disconnect() { }
 
     virtual bool updateCharacteristicValue(BLECharacteristic& /*characteristic*/) { return false; }

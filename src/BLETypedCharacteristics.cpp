@@ -3,10 +3,6 @@
 
 #include "BLETypedCharacteristics.h"
 
-BLEBoolCharacteristic::BLEBoolCharacteristic(const char* uuid, unsigned char properties) :
-  BLETypedCharacteristic<bool>(uuid, properties) {
-}
-
 BLECharCharacteristic::BLECharCharacteristic(const char* uuid, unsigned char properties) :
   BLETypedCharacteristic<char>(uuid, properties) {
 }

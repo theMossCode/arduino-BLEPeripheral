@@ -11,8 +11,13 @@
 #define JOYSTICK_Y_AXIS_PIN A1
 #define JOYSTICK_RANGE 24
 
-//custom boards may override default pin definitions with BLEHIDPeripheral(PIN_REQ, PIN_RDY, PIN_RST)
-BLEHIDPeripheral bleHIDPeripheral = BLEHIDPeripheral();
+// define pins (varies per shield/board)
+#define BLE_REQ   9
+#define BLE_RDY   8
+#define BLE_RST   4
+
+// create peripheral instance, see pinouts above
+BLEHIDPeripheral bleHIDPeripheral = BLEHIDPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 BLEMouse bleMouse;
 
 int buttonState;

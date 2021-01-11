@@ -6,8 +6,13 @@
 #include <BLEPeripheral.h>
 #include <BLEUtil.h>
 
-//custom boards may override default pin definitions with BLEPeripheral(PIN_REQ, PIN_RDY, PIN_RST)
-BLEPeripheral                    blePeripheral                            = BLEPeripheral();
+// define pins (varies per shield/board)
+#define BLE_REQ   6
+#define BLE_RDY   7
+#define BLE_RST   4
+
+// create peripheral instance, see pinouts above
+BLEPeripheral                    blePeripheral                            = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 
 // create remote services
 BLERemoteService                 remoteService                            = BLERemoteService("fffffffffffffffffffffffffffffff0");

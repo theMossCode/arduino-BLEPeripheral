@@ -11,21 +11,13 @@
   #include <ble_gatts.h>
   #include <ble_gattc.h>
   #include <nrf_soc.h>
-#elif defined(NRF52) && defined(S132) // ARDUINO_RBL_nRF52832
-  #ifndef ARDUINO_RBL_nRF52832
-    #define ARDUINO_RBL_nRF52832
-  #endif
-  #define NRF5
-
-  #include <sdk/softdevice/s132/headers/nrf_ble_gatts.h>
-  #include <sdk/softdevice/s132/headers/nrf_ble_gattc.h>
-  #include <sdk/softdevice/s132/headers/nrf_soc.h>
 #else
   #include <s110/ble_gatts.h>
   #include <s110/ble_gattc.h>
 #endif
 
 #include "BLEDevice.h"
+#include "BLECommon.h"
 
 class nRF51822 : public BLEDevice
 {
@@ -70,12 +62,13 @@ class nRF51822 : public BLEDevice
                 BLERemoteAttribute** remoteAttributes,
                 unsigned char numRemoteAttributes);
 
-    virtual void poll();
+    virtual void poll(uint32_t* evtBuf = NULL, uint16_t* evtLen = NULL);
 
     virtual void end();
 
     virtual bool setTxPower(int txPower);
-    virtual void startAdvertising();
+    virtual uint32_t startAdvertising();
+    virtual uint32_t stopAdvertise();
     virtual void disconnect();
 
     virtual bool updateCharacteristicValue(BLECharacteristic& characteristic);
@@ -100,7 +93,6 @@ class nRF51822 : public BLEDevice
 
     unsigned char                     _advData[31];
     unsigned char                     _advDataLen;
-    bool                              _hasScanData;
     BLECharacteristic*                _broadcastCharacteristic;
 
     uint16_t                          _connectionHandle;

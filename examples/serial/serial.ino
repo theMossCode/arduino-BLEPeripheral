@@ -20,20 +20,25 @@
 #include <BLEPeripheral.h>
 #include "BLESerial.h"
 
-//custom boards may override default pin definitions with BLESerial(PIN_REQ, PIN_RDY, PIN_RST)
-BLESerial bleSerial;
+// define pins (varies per shield/board)
+#define BLE_REQ   10
+#define BLE_RDY   2
+#define BLE_RST   9
+
+// create ble serial instance, see pinouts above
+BLESerial BLESerial(BLE_REQ, BLE_RDY, BLE_RST);
 
 
 void setup() {
   // custom services and characteristics can be added as well
-  bleSerial.setLocalName("UART");
+  BLESerial.setLocalName("UART");
 
   Serial.begin(115200);
-  bleSerial.begin();
+  BLESerial.begin();
 }
 
 void loop() {
-  bleSerial.poll();
+  BLESerial.poll();
 
   forward();
   // loopback();
@@ -43,26 +48,26 @@ void loop() {
 
 // forward received from Serial to BLESerial and vice versa
 void forward() {
-  if (bleSerial && Serial) {
+  if (BLESerial && Serial) {
     int byte;
-    while ((byte = bleSerial.read()) > 0) Serial.write((char)byte);
-    while ((byte = Serial.read()) > 0) bleSerial.write((char)byte);
+    while ((byte = BLESerial.read()) > 0) Serial.write((char)byte);
+    while ((byte = Serial.read()) > 0) BLESerial.write((char)byte);
   }
 }
 
 // echo all received data back
 void loopback() {
-  if (bleSerial) {
+  if (BLESerial) {
     int byte;
-    while ((byte = bleSerial.read()) > 0) bleSerial.write(byte);
+    while ((byte = BLESerial.read()) > 0) BLESerial.write(byte);
   }
 }
 
 // periodically sent time stamps
 void spam() {
-  if (bleSerial) {
-    bleSerial.print(millis());
-    bleSerial.println(" tick-tacks!");
+  if (BLESerial) {
+    BLESerial.print(millis());
+    BLESerial.println(" tick-tacks!");
     delay(1000);
   }
 }

@@ -166,8 +166,8 @@ void BLEPeripheral::begin() {
   this->_device->requestAddress();
 }
 
-void BLEPeripheral::poll() {
-  this->_device->poll();
+void BLEPeripheral::poll(uint32_t *evtBuf, uint16_t* evtLen) {
+  this->_device->poll(evtBuf, evtLen);
 }
 
 void BLEPeripheral::end() {
@@ -209,6 +209,14 @@ void BLEPeripheral::setDeviceName(const char* deviceName) {
 
 void BLEPeripheral::setAppearance(unsigned short appearance) {
   this->_appearanceCharacteristic.setValue((unsigned char *)&appearance, sizeof(appearance));
+}
+
+uint32_t BLEPeripheral::startAdvertising(){
+  return this->_device->startAdvertising();
+}
+
+uint32_t BLEPeripheral::stopAdvertise(){
+  return this->_device->stopAdvertise();
 }
 
 void BLEPeripheral::addAttribute(BLELocalAttribute& attribute) {

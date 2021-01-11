@@ -1,15 +1,12 @@
 # BLEPeripheral
 
 ## Constructor
-Creates the BLEPeripheral object. Pin Arguments are optional as pins are self detecting. See https://github.com/sandeepmistry/arduino-BLEPeripheral#pinouts
-
 ```c
-BLEPeripheral(unsigned char req = BLE_DEFAULT_REQ, unsigned char rdy = BLE_DEFAULT_RDY, unsigned char rst = BLE_DEFAULT_RST);
+BLEPeripheral(unsigned char req, unsigned char rdy, unsigned char rst);
 ```
-* req - REQ pin
+ * req - REQ pin
  * rdy - RDY pin
  * rst - RST pin, can be ```UNUSED```
-
 
 ## Advertising
 
@@ -251,7 +248,7 @@ Will automatically notify/indicate central, if characteristic has notify/indicat
 bool setValue(const unsigned char value[], unsigned char length);
 ```
  * value - value bytes
- * length - value length (up to value size)
+ * length - value length (upto value size)
 
 Returns true on success (central notified/indicated, if applicable), false on failure (cannot be notified/indicated, if applicable)
 
@@ -285,7 +282,7 @@ bool subscribed();
 ```
 
 ## Notify/indicate status
-Can the central be notified/indicated of when the value is set. Only applies to characteristics with notify and/or indicate properties when a central is connected and subscribed
+Can the central be notified/indicated of when the value is set. Only applies to characateristics with notify and/or indicate properties when a central is connected and subscribed
 ```c
 bool canNotify();
 bool canIndicate();
@@ -324,7 +321,7 @@ void bleCharacteristicEventHandler(BLECentral& central, BLECharacteristic& chara
 ```c
 BLE<Data Type>Characteristic(const char* uuid, unsigned char properties);
 ```
-See ```BLECharacteristic```
+See ```BLECharacteritic```
 
 ## Get value
 ```c
