@@ -22,6 +22,7 @@ class BLECentral
     void disconnect();
 
   protected:
+    BLECentral();
     BLECentral(BLEPeripheral* peripheral);
     void setAddress(const unsigned char* address);
     void clearAddress();

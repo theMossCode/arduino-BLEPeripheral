@@ -14,6 +14,11 @@ BLECentral::BLECentral(BLEPeripheral* peripheral) :
   this->clearAddress();
 }
 
+BLECentral::BLECentral()
+{
+  ;; // custom for use with BLECentralRole
+}
+
 BLECentral::operator bool() const {
   unsigned char zero[6] = {0, 0, 0, 0, 0, 0};
 

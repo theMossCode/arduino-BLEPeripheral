@@ -6,6 +6,8 @@
 
 #define MAX_UUID_LENGTH 16
 
+#include "ble.h"
+
 class BLEUuid
 {
   public:
@@ -14,6 +16,8 @@ class BLEUuid
     const char* str() const;
     const unsigned char* data() const;
     unsigned char length() const;
+
+    ble_uuid_t get_nordic_uuid();
 
   private:
     const char*    _str;

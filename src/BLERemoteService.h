@@ -8,6 +8,7 @@
 
 class BLERemoteService : public BLERemoteAttribute
 {
+  friend class BLECentralRole;
   public:
     BLERemoteService(const char* uuid);
 };

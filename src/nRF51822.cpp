@@ -164,12 +164,12 @@ void nRF51822::begin(unsigned char advertisementDataSize,
 	memset(&central_ble_cfg_opt, 0x00, sizeof(ble_opt_t));
 
 	periph_ble_cfg_opt.common_opt.conn_bw.role = BLE_GAP_ROLE_PERIPH;
-	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_MID;
-	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_tx = BLE_CONN_BW_MID;
+	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_LOW;
+	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_tx = BLE_CONN_BW_LOW;
 
 	central_ble_cfg_opt.common_opt.conn_bw.role = BLE_GAP_ROLE_CENTRAL;
-	central_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_LOW;
-	central_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_tx = BLE_CONN_BW_LOW;
+	central_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_MID;
+	central_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_tx = BLE_CONN_BW_MID;
 
 	sd_ble_opt_set(BLE_COMMON_OPT_CONN_BW, &periph_ble_cfg_opt);
 	sd_ble_opt_set(BLE_COMMON_OPT_CONN_BW, &central_ble_cfg_opt);
@@ -216,7 +216,7 @@ void nRF51822::begin(unsigned char advertisementDataSize,
 	gap_conn_params.conn_sup_timeout = 4000 / 10; // in 10ms unit
 
 	sd_ble_gap_ppcp_set(&gap_conn_params);
-	sd_ble_gap_tx_power_set(0);
+	this->setTxPower(4);
 
 	unsigned char srData[31];
 	unsigned char srDataLen = 0;
@@ -685,6 +685,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GAP_EVT_SEC_PARAMS_REQUEST:
+			if (this->_connectionHandle != bleEvt->evt.gap_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Sec Params Request "));
 #if !defined(NRF5) && !defined(NRF51_S130)
@@ -762,6 +766,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GAP_EVT_SEC_INFO_REQUEST:
+			if (this->_connectionHandle != bleEvt->evt.gap_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Sec Info Request "));
 			// Serial.print(bleEvt->evt.gap_evt.params.sec_info_request.peer_addr);
@@ -797,6 +805,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GAP_EVT_AUTH_STATUS:
+			if (this->_connectionHandle != bleEvt->evt.gap_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.println(F("Evt Auth Status"));
 			Serial.println(bleEvt->evt.gap_evt.params.auth_status.auth_status);
@@ -823,6 +835,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GAP_EVT_CONN_SEC_UPDATE:
+			if (this->_connectionHandle != bleEvt->evt.gap_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Conn Sec Update "));
 			Serial.print(bleEvt->evt.gap_evt.params.conn_sec_update.conn_sec.sec_mode.sm);
@@ -835,6 +851,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GATTS_EVT_WRITE: {
+			if (this->_connectionHandle != bleEvt->evt.gatts_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Write, handle = "));
 			Serial.println(bleEvt->evt.gatts_evt.params.write.handle, DEC);
@@ -874,6 +894,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 		}
 
 		case BLE_GATTS_EVT_SYS_ATTR_MISSING:
+			if (this->_connectionHandle != bleEvt->evt.gatts_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Sys Attr Missing "));
 			Serial.println(bleEvt->evt.gatts_evt.params.sys_attr_missing.hint);
@@ -886,6 +910,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GATTC_EVT_PRIM_SRVC_DISC_RSP:
+			if (this->_connectionHandle != bleEvt->evt.gattc_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Prim Srvc Disc Rsp 0x"));
 			Serial.println(bleEvt->evt.gattc_evt.gatt_status, HEX);
@@ -920,6 +948,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GATTC_EVT_CHAR_DISC_RSP:
+			if (this->_connectionHandle != bleEvt->evt.gattc_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Char Disc Rsp 0x"));
 			Serial.println(bleEvt->evt.gattc_evt.gatt_status, HEX);
@@ -966,6 +998,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GATTC_EVT_READ_RSP: {
+			if (this->_connectionHandle != bleEvt->evt.gattc_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Read Rsp 0x"));
 			Serial.println(bleEvt->evt.gattc_evt.gatt_status, HEX);
@@ -1012,6 +1048,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 		}
 
 		case BLE_GATTC_EVT_WRITE_RSP:
+			if (this->_connectionHandle != bleEvt->evt.gattc_evt.conn_handle) {
+				break;
+			}
+
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Write Rsp 0x"));
 			Serial.println(bleEvt->evt.gattc_evt.gatt_status, HEX);
@@ -1044,6 +1084,10 @@ void nRF51822::poll(uint32_t* evtBuf, uint16_t* evtLen) {
 			break;
 
 		case BLE_GATTC_EVT_HVX: {
+			if (this->_connectionHandle != bleEvt->evt.gattc_evt.conn_handle) {
+				break;
+			}
+			
 #ifdef NRF_51822_DEBUG
 			Serial.print(F("Evt Hvx 0x"));
 			Serial.println(bleEvt->evt.gattc_evt.gatt_status, HEX);
