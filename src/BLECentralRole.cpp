@@ -203,7 +203,7 @@ uint32_t BLECentralRole::connect(ble_gap_addr_t* addr)
 	memset(&this->_scanParams, 0x00, sizeof(ble_gap_scan_params_t));
 
 	this->_scanParams.active = _activeScan;
-	this->_scanParams.interval = ((300*16)/10);
+	this->_scanParams.interval = ((500*16)/10);
 	this->_scanParams.selective = 0;
 	this->_scanParams.timeout = this->_scanTimeout;
 	this->_scanParams.window = ((200*16)/10);

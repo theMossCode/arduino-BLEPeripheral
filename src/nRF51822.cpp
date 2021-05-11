@@ -18,6 +18,17 @@
 #endif
 
 
+#include "Arduino.h"
+
+#include "BLEAttribute.h"
+#include "BLEService.h"
+#include "BLECharacteristic.h"
+#include "BLEDescriptor.h"
+#include "BLEUtil.h"
+#include "BLEUuid.h"
+#include "nRF51822.h"
+
+
 #if defined(NRF5) || defined(NRF51_S130)
 uint32_t sd_ble_gatts_value_set(uint16_t handle, uint16_t offset, uint16_t* const p_len, uint8_t const* const p_value) {
 	ble_gatts_value_t val;
@@ -28,17 +39,6 @@ uint32_t sd_ble_gatts_value_set(uint16_t handle, uint16_t offset, uint16_t* cons
 	return sd_ble_gatts_value_set(BLE_CONN_HANDLE_INVALID, handle, &val);
 }
 #endif
-
-#include "Arduino.h"
-
-#include "BLEAttribute.h"
-#include "BLEService.h"
-#include "BLECharacteristic.h"
-#include "BLEDescriptor.h"
-#include "BLEUtil.h"
-#include "BLEUuid.h"
-
-#include "nRF51822.h"
 
 // #define NRF_51822_DEBUG
 
@@ -139,16 +139,16 @@ void nRF51822::begin(unsigned char advertisementDataSize,
 	ble_conn_bw_counts_t global_conn_cfg;
 	memset(&global_conn_cfg, 0x00, sizeof(ble_conn_bw_counts_t));
 
-	global_conn_cfg.rx_counts.high_count = 1;
-	global_conn_cfg.rx_counts.mid_count = 0;
+	global_conn_cfg.rx_counts.high_count = 0;
+	global_conn_cfg.rx_counts.mid_count = 1;
 	global_conn_cfg.rx_counts.low_count = 1;
-	global_conn_cfg.tx_counts.high_count = 1;
-	global_conn_cfg.tx_counts.mid_count = 0;
+	global_conn_cfg.tx_counts.high_count = 0;
+	global_conn_cfg.tx_counts.mid_count = 1;
 	global_conn_cfg.tx_counts.low_count = 1;
 
 	enableParams.common_enable_params.p_conn_bw_counts = &global_conn_cfg;
 
-	enableParams.common_enable_params.vs_uuid_count = 3;
+	enableParams.common_enable_params.vs_uuid_count = 5;
 	enableParams.gatts_enable_params.attr_tab_size = ATTRIBUTE_TABLE_SIZE;
 	enableParams.gatts_enable_params.service_changed = 1;
 	enableParams.gap_enable_params.periph_conn_count = 1;
@@ -164,8 +164,8 @@ void nRF51822::begin(unsigned char advertisementDataSize,
 	memset(&central_ble_cfg_opt, 0x00, sizeof(ble_opt_t));
 
 	periph_ble_cfg_opt.common_opt.conn_bw.role = BLE_GAP_ROLE_PERIPH;
-	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_HIGH;
-	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_tx = BLE_CONN_BW_HIGH;
+	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_MID;
+	periph_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_tx = BLE_CONN_BW_MID;
 
 	central_ble_cfg_opt.common_opt.conn_bw.role = BLE_GAP_ROLE_CENTRAL;
 	central_ble_cfg_opt.common_opt.conn_bw.conn_bw.conn_bw_rx = BLE_CONN_BW_LOW;
